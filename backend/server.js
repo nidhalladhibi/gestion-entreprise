@@ -7,6 +7,7 @@ import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import clientRoutes from "./routes/clientRoutes.js";
 import factureRoutes from "./routes/factureRoutes.js";
+import productRoutes from "./routes/productRoutes.js";
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/clients", clientRoutes);
 app.use("/api/factures", factureRoutes);
+app.use("/api/products", productRoutes);
 
 // Get __dirname in ES module
 const __filename = fileURLToPath(import.meta.url);

@@ -18,22 +18,29 @@ const apiCall = async (endpoint, options = {}) => {
   try {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
     
-    // Vérifier si la réponse est JSON
-    const contentType = response.headers.get("content-type");
-    let data;
-    
-    if (contentType && contentType.includes("application/json")) {
-      data = await response.json();
-    } else {
-      const text = await response.text();
-      throw new Error(text || "Une erreur est survenue");
-    }
-
     if (!response.ok) {
-      throw new Error(data.message || "Une erreur est survenue");
+      // Si le token est invalide ou expiré (erreur 401), on déconnecte l'utilisateur
+      if (response.status === 401) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        window.location.href = '/login'; // Redirection vers la page de connexion
+        throw new Error("Session expirée. Veuillez vous reconnecter.");
+      }
+      // Pour les autres erreurs (ex: 404), on essaie de lire le message
+      const errorText = await response.text();
+      throw new Error(errorText || `Erreur ${response.status}`);
     }
 
-    return data;
+    // Si la réponse est OK (2xx), on la traite
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+      const data = await response.json();
+      return data;
+    } else {
+      // Si la réponse n'est pas JSON mais qu'elle est OK, on ne fait rien.
+      // On pourrait aussi retourner le texte si nécessaire.
+      return null;
+    }
   } catch (error) {
     // Gérer les erreurs de connexion réseau
     const errorMessage = error.message || String(error);
@@ -72,4 +79,3 @@ export const authService = {
 };
 
 export default apiCall;
-

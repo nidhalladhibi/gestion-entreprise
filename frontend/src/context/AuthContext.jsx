@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect } from "react";
 import { authService } from "../services/api";
+import DataProvider from "./DataContext"; // 1. Importer le DataProvider
 
 export const AuthContext = createContext();
 
@@ -89,7 +90,8 @@ export default function AuthProvider({ children }) {
         logout, // Pour compatibilité avec Navbar
       }}
     >
-      {children}
+      {/* 2. Envelopper les enfants avec DataProvider */}
+      <DataProvider>{children}</DataProvider>
     </AuthContext.Provider>
   );
 }

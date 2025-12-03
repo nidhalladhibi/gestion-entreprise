@@ -96,7 +96,7 @@ export default function Invoice() {
   const addItem = () => {
     if (!selectedProduct || !products || quantity <= 0) return;
 
-    const product = products.find((p) => p.id === selectedProduct);
+    const product = products.find((p) => p._id === selectedProduct);
     if (!product) return;
 
     const newItem = {
@@ -112,7 +112,7 @@ export default function Invoice() {
 
   // Supprime un article de la facture
   const removeItem = (itemId) => {
-    setItems(items.filter(item => item.id !== itemId));
+    setItems(items.filter(item => item._id !== itemId));
   };
 
   const totalInvoice = items.reduce((sum, item) => sum + item.total, 0);
@@ -135,7 +135,7 @@ export default function Invoice() {
         >
           <option value="">-- Choisir un client --</option>
           {(clients || []).map((client) => (
-            <option key={client.id} value={client.id}>
+            <option key={client._id} value={client._id}>
               {client.name}
             </option>
           ))}
@@ -153,7 +153,7 @@ export default function Invoice() {
           >
             <option value="">-- Sélectionnez un produit --</option>
             {(products || []).map((product) => (
-              <option key={product.id} value={product.id}>
+              <option key={product._id} value={product._id}>
                 {product.name} - {product.price.toFixed(2)} DT
               </option>
             ))}
@@ -189,13 +189,13 @@ export default function Invoice() {
           <tbody>
             {items.length > 0 ? (
               items.map((item) => (
-                <tr key={item.id}>
+                <tr key={item._id}>
                   <td style={styles.thTd}>{item.name}</td>
                   <td style={styles.thTd}>{item.price.toFixed(2)} DT</td>
                   <td style={styles.thTd}>{item.quantity}</td>
                   <td style={styles.thTd}>{item.total.toFixed(2)} DT</td>
                   <td style={styles.thTd}>
-                    <button onClick={() => removeItem(item.id)} style={{...styles.button, ...styles.buttonDanger}}>
+                    <button onClick={() => removeItem(item._id)} style={{...styles.button, ...styles.buttonDanger}}>
                       🗑️
                     </button>
                   </td>

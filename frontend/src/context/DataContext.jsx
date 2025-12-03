@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import apiCall from '../services/api';
+import apiCall from '../services/api'; // Utilisation de l'exportation par défaut
 import { AuthContext } from './AuthContext';
 
 // 1. Création du contexte
@@ -23,8 +23,8 @@ export default function DataProvider({ children }) {
         try {
           // On charge les clients et les produits en parallèle
           const [clientsRes, productsRes] = await Promise.all([
-            apiCall.get('/clients'),
-            apiCall.get('/products')
+            apiCall('/clients'), // Correction: Appel direct de la fonction
+            apiCall('/products')  // Correction: Appel direct de la fonction
           ]);
           setClients(clientsRes);
           setProducts(productsRes);
@@ -48,7 +48,10 @@ export default function DataProvider({ children }) {
   // --- Fonctions pour les clients ---
   const addClient = async (clientData) => {
     try {
-      const newClient = await apiCall.post('/clients', clientData);
+      const newClient = await apiCall('/clients', {
+        method: 'POST',
+        body: JSON.stringify(clientData),
+      });
       setClients(prev => [newClient, ...prev]); // Ajoute en haut de la liste
       return { success: true };
     } catch (err) {
@@ -58,7 +61,7 @@ export default function DataProvider({ children }) {
 
   const deleteClient = async (id) => {
     try {
-      await apiCall.delete(`/clients/${id}`);
+      await apiCall(`/clients/${id}`, { method: 'DELETE' });
       setClients(prev => prev.filter(client => client._id !== id));
       return { success: true };
     } catch (err) {
@@ -69,7 +72,10 @@ export default function DataProvider({ children }) {
   // --- Fonctions pour les produits ---
   const addProduct = async (productData) => {
     try {
-      const newProduct = await apiCall.post('/products', productData);
+      const newProduct = await apiCall('/products', {
+        method: 'POST',
+        body: JSON.stringify(productData),
+      });
       setProducts(prev => [newProduct, ...prev]);
       return { success: true };
     } catch (err) {
@@ -79,7 +85,7 @@ export default function DataProvider({ children }) {
 
   const deleteProduct = async (id) => {
     try {
-      await apiCall.delete(`/products/${id}`);
+      await apiCall(`/products/${id}`, { method: 'DELETE' });
       setProducts(prev => prev.filter(product => product._id !== id));
       return { success: true };
     } catch (err) {
