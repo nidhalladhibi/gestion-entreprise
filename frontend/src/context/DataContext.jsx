@@ -69,6 +69,31 @@ export default function DataProvider({ children }) {
     }
   };
 
+  const getClientById = async (id) => {
+    try {
+      const client = await apiCall(`/clients/${id}`);
+      return { success: true, data: client };
+    } catch (err) {
+      return { success: false, error: err };
+    }
+  };
+
+  const updateClient = async (id, clientData) => {
+    try {
+      const updated = await apiCall(`/clients/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(clientData),
+      });
+      setClients(prev =>
+        prev.map(client => (client._id === id ? updated : client))
+      );
+      return { success: true, data: updated };
+    } catch (err) {
+      return { success: false, error: err };
+    }
+  };
+
+
   // --- Fonctions pour les produits ---
   const addProduct = async (productData) => {
     try {
@@ -93,6 +118,30 @@ export default function DataProvider({ children }) {
     }
   };
 
+  const getProductById = async (id) => {
+    try {
+      const product = await apiCall(`/products/${id}`);
+      return { success: true, data: product };
+    } catch (err) {
+      return { success: false, error: err };
+    }
+  };
+
+  const updateProduct = async (id, productData) => {
+    try {
+      const updated = await apiCall(`/products/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(productData),
+      });
+      setProducts(prev =>
+        prev.map(p => (p._id === id ? updated : p))
+      );
+      return { success: true, data: updated };
+    } catch (err) {
+      return { success: false, error: err };
+    }
+  };
+
   // 3. On fournit les données et les fonctions
   const value = {
     clients,
@@ -101,8 +150,12 @@ export default function DataProvider({ children }) {
     error,
     addClient,
     deleteClient,
+    getClientById,
+    updateClient,
     addProduct,
     deleteProduct,
+    getProductById,
+    updateProduct,
   };
 
   return (

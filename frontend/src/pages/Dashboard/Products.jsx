@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 import { DataContext } from "../../context/DataContext";
+import { Link } from "react-router-dom";
 
 export default function Products() {
   const styles = {
@@ -39,6 +40,13 @@ export default function Products() {
       backgroundColor: '#007bff',
       color: 'white',
     },
+    actionButton: {
+      marginRight: '10px',
+      padding: '5px 10px',
+      fontSize: '0.9rem',
+      textDecoration: 'none',
+      display: 'inline-block',
+    },
     table: {
       width: '100%',
       borderCollapse: 'collapse',
@@ -51,7 +59,7 @@ export default function Products() {
     },
   };
 
-  const { products, addProduct, loading, error } = useContext(DataContext) || {};
+  const { products, addProduct, deleteProduct, loading, error } = useContext(DataContext) || {};
 
   const [form, setForm] = useState({
     name: "",
@@ -83,6 +91,12 @@ export default function Products() {
     });
 
     setForm({ name: "", price: "", stock: "" });
+  };
+
+  const handleDelete = (id) => {
+    if (window.confirm("Êtes-vous sûr de vouloir supprimer ce produit ?")) {
+      deleteProduct(id);
+    }
   };
 
   if (loading && !products) return <p>Chargement des produits...</p>;
@@ -136,13 +150,15 @@ export default function Products() {
               <th style={styles.thTd}>#</th>
               <th style={styles.thTd}>Produit</th>
               <th style={styles.thTd}>Prix</th>
-              <th style={styles.thTd}>Stock</th>
+              <th style={styles.thTd}>Quantité en Stock</th>
+              <th style={styles.thTd}>Valeur Totale</th>
+              <th style={styles.thTd}>Actions</th>
             </tr>
           </thead>
           <tbody>
             {(products || []).length === 0 ? (
               <tr>
-                <td colSpan="4" align="center" style={styles.thTd}>
+                <td colSpan="6" align="center" style={styles.thTd}>
                   Aucun produit enregistré.
                 </td>
               </tr>
@@ -152,7 +168,12 @@ export default function Products() {
                   <td style={styles.thTd}>{i + 1}</td>
                   <td style={styles.thTd}>{p.name}</td>
                   <td style={styles.thTd}>{(p.price || 0).toFixed(2)} DT</td>
-                  <td style={styles.thTd}>{p.stock}</td>
+                  <td style={styles.thTd}>{p.stock || 0}</td>
+                  <td style={styles.thTd}>{((p.price || 0) * (p.stock || 0)).toFixed(2)} DT</td>
+                  <td style={styles.thTd}>
+                    <Link to={`/dashboard/product/edit/${p._id}`} style={{...styles.button, ...styles.actionButton}}>Modifier</Link>
+                    <button onClick={() => handleDelete(p._id)} style={{...styles.button, ...styles.actionButton, backgroundColor: '#dc3545'}}>Supprimer</button>
+                  </td>
                 </tr>
               ))
             )}

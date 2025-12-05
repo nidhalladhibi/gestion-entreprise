@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 import { DataContext } from "../../context/DataContext";
+import { Link } from "react-router-dom";
 
 // Styles pour une apparence moderne, inspirés de Settings.jsx
 const styles = {
@@ -39,6 +40,11 @@ const styles = {
     backgroundColor: '#007bff',
     color: 'white',
   },
+  actionButton: {
+    marginRight: '10px',
+    padding: '5px 10px',
+    fontSize: '0.9rem',
+  },
   table: {
     width: '100%',
     borderCollapse: 'collapse',
@@ -52,11 +58,14 @@ const styles = {
 };
 
 export default function Clients() {
-  const { clients, addClient, loading, error } = useContext(DataContext) || {};
+  const { clients, addClient, deleteClient, loading, error } = useContext(DataContext) || {};
   const [form, setForm] = useState({
     name: "",
     phone: "",
+    email: "",
+    address: "",
     credit: "",
+    
   });
 
   const handleChange = (e) => {
@@ -66,8 +75,8 @@ export default function Clients() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!form.name || !form.phone) {
-      alert("Veuillez remplir le nom et le téléphone.");
+    if (!form.name || !form.email) {
+      alert("Veuillez remplir le nom et l'email.");
       return;
     }
 
@@ -81,7 +90,13 @@ export default function Clients() {
       credit: Number(form.credit || 0)
     });
 
-    setForm({ name: "", phone: "", credit: "" });
+    setForm({ name: "", phone: "", email: "", address: "", credit: "" });
+  };
+
+  const handleDelete = (id) => {
+    if (window.confirm("Êtes-vous sûr de vouloir supprimer ce client ?")) {
+      deleteClient(id);
+    }
   };
 
   if (loading && !clients) return <p>Chargement des clients...</p>;
@@ -107,12 +122,20 @@ export default function Clients() {
           />
           <input
             style={styles.input}
+            type="email"
+            name="email"
+            placeholder="Email du client"
+            value={form.email}
+            onChange={handleChange}
+            required
+          />
+          <input
+            style={styles.input}
             type="text"
             name="phone"
             placeholder="Téléphone"
             value={form.phone}
             onChange={handleChange}
-            required
           />
           <input
             style={styles.input}
@@ -135,13 +158,15 @@ export default function Clients() {
               <th style={styles.thTd}>#</th>
               <th style={styles.thTd}>Nom</th>
               <th style={styles.thTd}>Téléphone</th>
+              <th style={styles.thTd}>Email</th>
               <th style={styles.thTd}>Crédit</th>
+              <th style={styles.thTd}>Actions</th>
             </tr>
           </thead>
           <tbody>
             {(clients || []).length === 0 ? (
               <tr>
-                <td colSpan="4" align="center" style={styles.thTd}>
+                <td colSpan="6" align="center" style={styles.thTd}>
                   Aucun client enregistré.
                 </td>
               </tr>
@@ -151,7 +176,12 @@ export default function Clients() {
                   <td style={styles.thTd}>{i + 1}</td>
                   <td style={styles.thTd}>{c.name}</td>
                   <td style={styles.thTd}>{c.phone}</td>
+                  <td style={styles.thTd}>{c.email}</td>
                   <td style={styles.thTd}>{(c.credit || 0).toFixed(2)} DT</td>
+                  <td style={styles.thTd}>
+                    <Link to={`/dashboard/client/edit/${c._id}`} style={{...styles.button, ...styles.actionButton}}>Modifier</Link>
+                    <button onClick={() => handleDelete(c._id)} style={{...styles.button, ...styles.actionButton, backgroundColor: '#dc3545'}}>Supprimer</button>
+                  </td>
                 </tr>
               ))
             )}

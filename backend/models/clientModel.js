@@ -24,6 +24,10 @@ const clientSchema = new mongoose.Schema(
     company: {
       type: String,
     },
+    credit: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,

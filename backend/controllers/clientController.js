@@ -33,7 +33,7 @@ export const getClientById = asyncHandler(async (req, res) => {
 });
 
 export const createClient = asyncHandler(async (req, res) => {
-  const { name, email, phone, address } = req.body;
+  const { name, email, phone, address, credit } = req.body;
 
   if (!name || !email) {
     res.status(400);
@@ -46,6 +46,7 @@ export const createClient = asyncHandler(async (req, res) => {
     email,
     phone,
     address,
+    credit,
   });
 
   res.status(201).json(client);

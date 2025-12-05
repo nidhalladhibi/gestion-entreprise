@@ -71,6 +71,7 @@ export default function Home() {
   const totalClients = (clients || []).length;
   const totalProducts = (products || []).length;
   const totalCredit = (clients || []).reduce((sum, client) => sum + (client.credit || 0), 0);
+  const totalStockValue = (products || []).reduce((sum, p) => sum + (p.price || 0) * (p.stock || 0), 0);
   // On prend les 5 clients les plus récents
   const recentClients = (clients || []).slice(0, 5);
 
@@ -92,21 +93,32 @@ export default function Home() {
           <h3 style={styles.cardTitle}>💰 Crédit Client Total</h3>
           <p style={styles.cardValue}>{totalCredit.toFixed(2)} DT</p>
         </div>
+        <div style={styles.card}>
+          <h3 style={styles.cardTitle}>📈 Valeur Totale du Stock</h3>
+          <p style={styles.cardValue}>{totalStockValue.toFixed(2)} DT</p>
+        </div>
       </div>
 
       {/* Accès rapide */}
-      <h2 style={{ fontSize: "1.2rem" }}>Accès Rapide</h2>
-      <div style={styles.quickAccess}>
-        <Link to="/dashboard/clients" style={styles.quickAccessButton}>
-          ➕ Ajouter un Client
-        </Link>
-        <Link to="/dashboard/products" style={styles.quickAccessButton}>
-          ➕ Ajouter un Produit
-        </Link>
-        <Link to="/dashboard/invoice" style={styles.quickAccessButton}>
-          🧾 Créer une Facture
-        </Link>
-      </div>
+<h2 style={{ fontSize: "1.2rem" }}>Accès Rapide</h2>
+
+<div style={styles.quickAccess}>
+  <Link to="/dashboard/clients" style={styles.quickAccessButton}>
+    ➕ Ajouter un Client
+  </Link>
+
+  <Link to="/dashboard/products" style={styles.quickAccessButton}>
+    ➕ Ajouter un Produit
+  </Link>
+
+  <Link to="/dashboard/invoice" style={styles.quickAccessButton}>
+    🧾 Créer une Facture
+  </Link>
+
+  <Link to="/dashboard/settings" style={styles.quickAccessButton}>
+    ⚙️ Paramètres
+  </Link>
+</div>
 
       {/* Clients récents */}
       <div style={styles.card}>
