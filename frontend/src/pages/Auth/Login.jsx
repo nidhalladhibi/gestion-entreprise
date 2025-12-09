@@ -54,68 +54,61 @@ export default function Login() {
 
   return (
     <div className="auth-container">
-      <h2>تسجيل الدخول</h2>
+      <div className="auth-card">
+        <h2 className="auth-title">Connexion</h2>
+        <p className="auth-subtitle">Connectez-vous pour accéder à votre tableau de bord.</p>
 
-      {error && (
-        <div style={{ 
-          padding: "0.75rem", 
-          marginBottom: "1rem", 
-          backgroundColor: "#fee", 
-          color: "#c33", 
-          borderRadius: "4px",
-          textAlign: "center",
-          border: "1px solid #fcc",
-          fontSize: "0.9rem"
-        }}>
-          ⚠️ {error}
-        </div>
-      )}
+        {error && (
+          <div className="auth-error">
+            ⚠️ {error}
+          </div>
+        )}
 
-      <form onSubmit={handleSubmit}>
-        <div className="input-group">
-          <label>البريد الإلكتروني</label>
-          <input
-            type="email"
-            name="email"
-            value={form.email}
-            onChange={handleChange}
-            placeholder="example@gmail.com"
-            required
+        <form onSubmit={handleSubmit}>
+          <div className="input-group">
+            <label htmlFor="email">Adresse Email</label>
+            <input
+              id="email"
+              type="email"
+              name="email"
+              value={form.email}
+              onChange={handleChange}
+              placeholder="exemple@domaine.com"
+              required
+              disabled={loading}
+            />
+          </div>
+
+          <div className="input-group">
+            <label htmlFor="password">Mot de passe</label>
+            <input
+              id="password"
+              type="password"
+              name="password"
+              value={form.password}
+              onChange={handleChange}
+              placeholder="••••••••"
+              required
+              disabled={loading}
+            />
+          </div>
+
+          <button 
+            type="submit" 
+            className="btn-primary" 
             disabled={loading}
-          />
-        </div>
+          >
+            {loading ? "Connexion en cours..." : "Se connecter"}
+          </button>
+        </form>
 
-        <div className="input-group">
-          <label>كلمة السر</label>
-          <input
-            type="password"
-            name="password"
-            value={form.password}
-            onChange={handleChange}
-            placeholder="******"
-            required
-            disabled={loading}
-          />
-        </div>
-
-        <button 
-          type="submit" 
-          className="btn-primary" 
-          disabled={loading}
-        >
-          {loading ? "جاري التحقق..." : "دخول"}
-        </button>
-      </form>
-
-      <p style={{ marginTop: "1rem", textAlign: "center" }}>
-        ليس لديك حساب؟{" "}
-        <Link 
-          to="/register" 
-          style={{ color: "#007bff", textDecoration: "none" }}
-        >
-          إنشاء حساب
-        </Link>
-      </p>
+        <p className="auth-switch">
+          Pas encore de compte ?{" "}
+          <Link to="/register">
+            S'inscrire
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }

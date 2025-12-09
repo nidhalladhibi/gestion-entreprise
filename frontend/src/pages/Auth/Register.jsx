@@ -63,94 +63,89 @@ export default function Register() {
 
   return (
     <div className="auth-container">
-      <h2>إنشاء حساب</h2>
+      <div className="auth-card">
+        <h2 className="auth-title">Créer un compte</h2>
+        <p className="auth-subtitle">Rejoignez-nous en quelques secondes.</p>
 
-      {error && (
-        <div style={{ 
-          padding: "0.75rem", 
-          marginBottom: "1rem", 
-          backgroundColor: "#fee", 
-          color: "#c33", 
-          borderRadius: "4px",
-          textAlign: "center",
-          border: "1px solid #fcc",
-          fontSize: "0.9rem"
-        }}>
-          ⚠️ {error}
-        </div>
-      )}
+        {error && (
+          <div className="auth-error">
+            ⚠️ {error}
+          </div>
+        )}
 
-      <form onSubmit={handleSubmit}>
-        <div className="input-group">
-          <label>الاسم الكامل</label>
-          <input
-            type="text"
-            name="name"
-            value={form.name}
-            onChange={handleChange}
-            placeholder="أدخل اسمك الكامل"
-            required
+        <form onSubmit={handleSubmit}>
+          <div className="input-group">
+            <label htmlFor="name">Nom complet</label>
+            <input
+              id="name"
+              type="text"
+              name="name"
+              value={form.name}
+              onChange={handleChange}
+              placeholder="Votre nom complet"
+              required
+              disabled={loading}
+            />
+          </div>
+
+          <div className="input-group">
+            <label htmlFor="email">Adresse Email</label>
+            <input
+              id="email"
+              type="email"
+              name="email"
+              value={form.email}
+              onChange={handleChange}
+              placeholder="exemple@domaine.com"
+              required
+              disabled={loading}
+            />
+          </div>
+
+          <div className="input-group">
+            <label htmlFor="password">Mot de passe</label>
+            <input
+              id="password"
+              type="password"
+              name="password"
+              value={form.password}
+              onChange={handleChange}
+              placeholder="••••••••"
+              required
+              disabled={loading}
+            />
+          </div>
+
+          <div className="input-group">
+            <label htmlFor="confirmPassword">Confirmer le mot de passe</label>
+            <input
+              id="confirmPassword"
+              type="password"
+              name="confirmPassword"
+              value={form.confirmPassword}
+              onChange={handleChange}
+              placeholder="••••••••"
+              required
+              disabled={loading}
+            />
+          </div>
+
+          <button 
+            type="submit" 
+            className="btn-primary" 
             disabled={loading}
-          />
-        </div>
+          >
+            {loading ? "Création en cours..." : "S'inscrire"}
+          </button>
+        </form>
 
-        <div className="input-group">
-          <label>البريد الإلكتروني</label>
-          <input
-            type="email"
-            name="email"
-            value={form.email}
-            onChange={handleChange}
-            placeholder="example@gmail.com"
-            required
-            disabled={loading}
-          />
-        </div>
-
-        <div className="input-group">
-          <label>كلمة السر</label>
-          <input
-            type="password"
-            name="password"
-            value={form.password}
-            onChange={handleChange}
-            placeholder="******"
-            required
-            disabled={loading}
-          />
-        </div>
-
-        <div className="input-group">
-          <label>تأكيد كلمة السر</label>
-          <input
-            type="password"
-            name="confirmPassword"
-            value={form.confirmPassword}
-            onChange={handleChange}
-            placeholder="******"
-            required
-            disabled={loading}
-          />
-        </div>
-
-        <button 
-          type="submit" 
-          className="btn-primary" 
-          disabled={loading}
-        >
-          {loading ? "جاري إنشاء الحساب..." : "إنشاء حساب"}
-        </button>
-      </form>
-
-      <p style={{ marginTop: "1rem", textAlign: "center" }}>
-        لديك حساب بالفعل؟{" "}
-        <Link 
-          to="/login" 
-          style={{ color: "#007bff", textDecoration: "none" }}
-        >
-          تسجيل الدخول
-        </Link>
-      </p>
+        <p className="auth-switch">
+          Vous avez déjà un compte ?{" "}
+          <Link to="/login">
+            Se connecter
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }
