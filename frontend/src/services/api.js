@@ -1,6 +1,8 @@
-const API_BASE_URL = 
-  (typeof process !== "undefined" && process.env?.REACT_APP_API_URL) || 
-  "http://localhost:5000/api";
+const API_BASE_URL =
+  (typeof process !== "undefined" && process.env?.REACT_APP_API_URL)
+    ? process.env.REACT_APP_API_URL
+    : "https://gestion-entreprise-6bf8.onrender.com/api";
+
 
 // Fonction utilitaire pour les appels API
 const apiCall = async (endpoint, options = {}) => {
