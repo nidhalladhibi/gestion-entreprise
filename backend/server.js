@@ -15,26 +15,21 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Routes API
 app.use("/api/auth", authRoutes);
 app.use("/api/clients", clientRoutes);
 app.use("/api/factures", factureRoutes);
 app.use("/api/products", productRoutes);
 
-// Get __dirname in ES module
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Serve static assets in production
 if (process.env.NODE_ENV === 'production') {
-  // Set static folder
   app.use(express.static(join(__dirname, 'frontend/build')));
   
-  app.get('*', (req, res) => {
+  app.get('(.*)', (req, res) => {
     res.sendFile(join(__dirname, 'frontend/build', 'index.html'));
   });
 } else {
-  // Simple root for dev
   app.get("/", (req, res) => res.send("API is running"));
 }
 
