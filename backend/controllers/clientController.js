@@ -92,3 +92,4 @@ export const deleteClient = asyncHandler(async (req, res) => {
 
   res.status(200).json({ id: req.params.id, message: "Client supprimé avec succès" });
 });
+

@@ -62,24 +62,25 @@ export default function Register() {
   };
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <h2 className="auth-title">Créer un compte</h2>
-        <p className="auth-subtitle">Rejoignez-nous en quelques secondes.</p>
+    <div style={styles.container}>
+      <div style={styles.card}>
+        <h2 style={styles.title}>Créer un compte</h2>
+        <p style={styles.subtitle}>Rejoignez-nous en quelques secondes.</p>
 
         {error && (
-          <div className="auth-error">
+          <div style={styles.error}>
             ⚠️ {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit}>
-          <div className="input-group">
-            <label htmlFor="name">Nom complet</label>
+          <div style={styles.formGroup}>
+            <label style={styles.label} htmlFor="name">Nom complet</label>
             <input
               id="name"
               type="text"
               name="name"
+              style={styles.input}
               value={form.name}
               onChange={handleChange}
               placeholder="Votre nom complet"
@@ -88,12 +89,13 @@ export default function Register() {
             />
           </div>
 
-          <div className="input-group">
-            <label htmlFor="email">Adresse Email</label>
+          <div style={styles.formGroup}>
+            <label style={styles.label} htmlFor="email">Adresse Email</label>
             <input
               id="email"
               type="email"
               name="email"
+              style={styles.input}
               value={form.email}
               onChange={handleChange}
               placeholder="exemple@domaine.com"
@@ -102,12 +104,13 @@ export default function Register() {
             />
           </div>
 
-          <div className="input-group">
-            <label htmlFor="password">Mot de passe</label>
+          <div style={styles.formGroup}>
+            <label style={styles.label} htmlFor="password">Mot de passe</label>
             <input
               id="password"
               type="password"
               name="password"
+              style={styles.input}
               value={form.password}
               onChange={handleChange}
               placeholder="••••••••"
@@ -116,12 +119,13 @@ export default function Register() {
             />
           </div>
 
-          <div className="input-group">
-            <label htmlFor="confirmPassword">Confirmer le mot de passe</label>
+          <div style={styles.formGroup}>
+            <label style={styles.label} htmlFor="confirmPassword">Confirmer le mot de passe</label>
             <input
               id="confirmPassword"
               type="password"
               name="confirmPassword"
+              style={styles.input}
               value={form.confirmPassword}
               onChange={handleChange}
               placeholder="••••••••"
@@ -132,20 +136,109 @@ export default function Register() {
 
           <button 
             type="submit" 
-            className="btn-primary" 
+            style={styles.button}
             disabled={loading}
           >
             {loading ? "Création en cours..." : "S'inscrire"}
           </button>
         </form>
 
-        <p className="auth-switch">
+        <div style={styles.footer}>
           Vous avez déjà un compte ?{" "}
-          <Link to="/login">
+          <Link to="/login" style={styles.link}>
             Se connecter
           </Link>
-        </p>
+        </div>
       </div>
     </div>
   );
 }
+
+const styles = {
+  container: {
+    minHeight: '100vh',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#f0f2f5',
+    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+    padding: '20px',
+  },
+  card: {
+    backgroundColor: '#fff',
+    padding: '40px',
+    borderRadius: '12px',
+    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.1)',
+    width: '100%',
+    maxWidth: '450px',
+  },
+  title: {
+    textAlign: 'center',
+    color: '#333',
+    fontSize: '2rem',
+    fontWeight: '700',
+    marginBottom: '10px',
+    marginTop: 0,
+  },
+  subtitle: {
+    textAlign: 'center',
+    color: '#666',
+    marginBottom: '30px',
+    marginTop: 0,
+  },
+  error: {
+    backgroundColor: '#fee',
+    color: '#c33',
+    padding: '10px',
+    borderRadius: '6px',
+    marginBottom: '20px',
+    textAlign: 'center',
+    border: '1px solid #fcc',
+  },
+  formGroup: {
+    marginBottom: '20px',
+  },
+  label: {
+    display: 'block',
+    marginBottom: '8px',
+    color: '#444',
+    fontWeight: '500',
+    fontSize: '0.95rem',
+  },
+  input: {
+    width: '100%',
+    padding: '12px 15px',
+    borderRadius: '8px',
+    border: '1px solid #ddd',
+    fontSize: '1rem',
+    outline: 'none',
+    boxSizing: 'border-box',
+    transition: 'border-color 0.3s',
+    backgroundColor: '#f9f9f9',
+  },
+  button: {
+    width: '100%',
+    padding: '14px',
+    backgroundColor: '#28a745',
+    color: 'white',
+    border: 'none',
+    borderRadius: '8px',
+    fontSize: '1.1rem',
+    fontWeight: '600',
+    cursor: 'pointer',
+    marginTop: '10px',
+    transition: 'background-color 0.3s',
+  },
+  footer: {
+    marginTop: '25px',
+    textAlign: 'center',
+    fontSize: '0.95rem',
+    color: '#666',
+  },
+  link: {
+    color: '#007bff',
+    textDecoration: 'none',
+    fontWeight: '600',
+    marginLeft: '5px',
+  }
+};

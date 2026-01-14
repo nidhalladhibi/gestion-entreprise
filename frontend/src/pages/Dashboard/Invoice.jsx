@@ -91,7 +91,7 @@ export default function Invoice() {
 
   const [selectedClient, setSelectedClient] = useState("");
   const [selectedProduct, setSelectedProduct] = useState("");
-  const [invoiceNumber] = useState(`INV-${Date.now().toString().slice(-6)}`);
+  const [invoiceNumber, setInvoiceNumber] = useState(`INV-${Date.now().toString().slice(-6)}`);
   const [quantity, setQuantity] = useState(1);
   const [items, setItems] = useState([]);
 
@@ -145,21 +145,64 @@ export default function Invoice() {
     const actions = input.querySelectorAll('.action-col');
     actions.forEach(el => el.style.display = 'none');
 
-    html2canvas(input, { scale: 2 }) // scale pour une meilleure résolution
+    html2canvas(input, { scale: 2, useCORS: true, allowTaint: true })
       .then((canvas) => {
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const imgWidth = canvas.width;
-        const imgHeight = canvas.height;
-        const ratio = pdfWidth / imgWidth;
-        const pdfHeight = imgHeight * ratio;
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-        pdf.save(`facture-${Date.now()}.pdf`);
-        // On ré-affiche les boutons après la génération
+        try {
+          const imgData = canvas.toDataURL('image/png');
+          const pdf = new jsPDF('p', 'mm', 'a4');
+          const pdfWidth = pdf.internal.pageSize.getWidth();
+          const pdfHeight = pdf.internal.pageSize.getHeight();
+          
+          const imgWidth = canvas.width;
+          const imgHeight = canvas.height;
+          const ratio = pdfWidth / imgWidth;
+          
+          let heightLeft = imgHeight * ratio;
+          let position = 0;
+
+          // Ajouter l'image avec support multi-page
+          pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeight * ratio);
+          heightLeft -= pdfHeight;
+
+          while (heightLeft > 0) {
+            position = heightLeft - imgHeight * ratio;
+            pdf.addPage();
+            pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeight * ratio);
+            heightLeft -= pdfHeight;
+          }
+
+          pdf.save(`facture-${Date.now()}.pdf`);
+          // On ré-affiche les boutons après la génération
+          actions.forEach(el => el.style.display = '');
+        } catch (error) {
+          console.error('Erreur lors de la génération du PDF:', error);
+          alert('Erreur lors de la génération du PDF. Veuillez réessayer.');
+          // On ré-affiche les boutons en cas d'erreur
+          actions.forEach(el => el.style.display = '');
+        }
+      })
+      .catch((error) => {
+        console.error('Erreur html2canvas:', error);
+        alert('Erreur lors de la capture de la facture.');
+        // On ré-affiche les boutons en cas d'erreur
         actions.forEach(el => el.style.display = '');
       });
   };
+
+  const handleValidate = () => {
+    if (items.length === 0 || !selectedClient) return;
+
+    // Simulation de la validation (à connecter avec le backend si nécessaire)
+    alert("Facture validée avec succès !");
+
+    // Réinitialisation du formulaire
+    setItems([]);
+    setSelectedClient("");
+    setSelectedProduct("");
+    setQuantity(1);
+    setInvoiceNumber(`INV-${Date.now().toString().slice(-6)}`);
+  };
+
   if (loading && (!clients || !products)) return <p>Chargement des données pour la facturation...</p>;
   if (error) return <p style={{ color: 'red' }}>Erreur: {error}</p>;
 
@@ -224,7 +267,6 @@ export default function Invoice() {
             <div style={{display: 'flex', justifyContent: 'space-between', borderBottom: '2px solid #eee', paddingBottom: '20px', marginBottom: '20px'}}>
                 <div>
                     <h2 style={{margin: 0, color: '#333'}}>VotreEntreprise</h2>
-                    <p style={{margin: 0, color: '#666'}}>123 Rue de l'Exemple, 75000 Paris</p>
                 </div>
                 <div style={{textAlign: 'right'}}>
                     <h3 style={{margin: 0}}>Facture</h3>
@@ -296,7 +338,7 @@ export default function Invoice() {
         <button onClick={handleExportPDF} style={{ ...styles.button, backgroundColor: '#17a2b8', flex: 1 }} disabled={items.length === 0 || !selectedClient}>
           📄 Exporter en PDF
         </button>
-        <button style={{ ...styles.button, flex: 2, fontSize: '1.2rem' }} disabled={items.length === 0 || !selectedClient}>
+        <button onClick={handleValidate} style={{ ...styles.button, flex: 2, fontSize: '1.2rem' }} disabled={items.length === 0 || !selectedClient}>
           ✅ Valider la Facture
         </button>
       </div>

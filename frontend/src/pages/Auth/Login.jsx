@@ -53,24 +53,25 @@ export default function Login() {
   };
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <h2 className="auth-title">Connexion</h2>
-        <p className="auth-subtitle">Connectez-vous pour accéder à votre tableau de bord.</p>
+    <div style={styles.container}>
+      <div style={styles.card}>
+        <h2 style={styles.title}>Bienvenue</h2>
+        <p style={styles.subtitle}>Connectez-vous à votre compte</p>
 
         {error && (
-          <div className="auth-error">
+          <div style={styles.error}>
             ⚠️ {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit}>
-          <div className="input-group">
-            <label htmlFor="email">Adresse Email</label>
+          <div style={styles.formGroup}>
+            <label style={styles.label} htmlFor="email">Adresse Email</label>
             <input
               id="email"
               type="email"
               name="email"
+              style={styles.input}
               value={form.email}
               onChange={handleChange}
               placeholder="exemple@domaine.com"
@@ -79,12 +80,13 @@ export default function Login() {
             />
           </div>
 
-          <div className="input-group">
-            <label htmlFor="password">Mot de passe</label>
+          <div style={styles.formGroup}>
+            <label style={styles.label} htmlFor="password">Mot de passe</label>
             <input
               id="password"
               type="password"
               name="password"
+              style={styles.input}
               value={form.password}
               onChange={handleChange}
               placeholder="••••••••"
@@ -95,20 +97,108 @@ export default function Login() {
 
           <button 
             type="submit" 
-            className="btn-primary" 
+            style={styles.button}
             disabled={loading}
           >
             {loading ? "Connexion en cours..." : "Se connecter"}
           </button>
         </form>
 
-        <p className="auth-switch">
+        <div style={styles.footer}>
           Pas encore de compte ?{" "}
-          <Link to="/register">
+          <Link to="/register" style={styles.link}>
             S'inscrire
           </Link>
-        </p>
+        </div>
       </div>
     </div>
   );
 }
+
+const styles = {
+  container: {
+    minHeight: '100vh',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#f0f2f5',
+    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+  },
+  card: {
+    backgroundColor: '#fff',
+    padding: '40px',
+    borderRadius: '12px',
+    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.1)',
+    width: '100%',
+    maxWidth: '400px',
+  },
+  title: {
+    textAlign: 'center',
+    color: '#333',
+    fontSize: '2rem',
+    fontWeight: '700',
+    marginBottom: '10px',
+    marginTop: 0,
+  },
+  subtitle: {
+    textAlign: 'center',
+    color: '#666',
+    marginBottom: '30px',
+    marginTop: 0,
+  },
+  error: {
+    backgroundColor: '#fee',
+    color: '#c33',
+    padding: '10px',
+    borderRadius: '6px',
+    marginBottom: '20px',
+    textAlign: 'center',
+    border: '1px solid #fcc',
+  },
+  formGroup: {
+    marginBottom: '20px',
+  },
+  label: {
+    display: 'block',
+    marginBottom: '8px',
+    color: '#444',
+    fontWeight: '500',
+    fontSize: '0.95rem',
+  },
+  input: {
+    width: '100%',
+    padding: '12px 15px',
+    borderRadius: '8px',
+    border: '1px solid #ddd',
+    fontSize: '1rem',
+    outline: 'none',
+    boxSizing: 'border-box',
+    transition: 'border-color 0.3s',
+    backgroundColor: '#f9f9f9',
+  },
+  button: {
+    width: '100%',
+    padding: '14px',
+    backgroundColor: '#007bff',
+    color: 'white',
+    border: 'none',
+    borderRadius: '8px',
+    fontSize: '1.1rem',
+    fontWeight: '600',
+    cursor: 'pointer',
+    marginTop: '10px',
+    transition: 'background-color 0.3s',
+  },
+  footer: {
+    marginTop: '25px',
+    textAlign: 'center',
+    fontSize: '0.95rem',
+    color: '#666',
+  },
+  link: {
+    color: '#007bff',
+    textDecoration: 'none',
+    fontWeight: '600',
+    marginLeft: '5px',
+  }
+};

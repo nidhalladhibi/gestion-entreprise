@@ -14,3 +14,4 @@ router.route("/:id")
   .delete(protect, deleteClient);
 
 export default router;
+

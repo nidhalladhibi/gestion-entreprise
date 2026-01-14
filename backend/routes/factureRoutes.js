@@ -13,3 +13,4 @@ router.route("/:id")
   .delete(protect, deleteFacture);
 
 export default router;
+
