@@ -6,14 +6,24 @@ import "../styles/dashboard.css"; // استورد الـ CSS هنا
 
 export default function MainLayout() {
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
-  const handleToggle = () => setCollapsed(!collapsed);
+  const handleToggle = () => {
+    if (window.innerWidth <= 640) {
+      setMobileOpen(!mobileOpen);
+    } else {
+      setCollapsed(!collapsed);
+    }
+  };
+
+  const closeMobileSidebar = () => setMobileOpen(false);
 
   return (
     <div className="app">
       <Navbar onToggleSidebar={handleToggle} />
+      {mobileOpen && <div className="sidebar-overlay" onClick={closeMobileSidebar}></div>}
       <div className="main-wrapper">
-        <Sidebar collapsed={collapsed} />
+        <Sidebar collapsed={collapsed} mobileOpen={mobileOpen} onCloseMobile={closeMobileSidebar} />
         <main className={`main-content ${collapsed ? "expanded" : ""}`}>
           <div className="container">
             <Outlet />

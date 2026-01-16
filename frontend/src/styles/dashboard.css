@@ -1,5 +1,13 @@
 
-* { box-sizing: border-box; margin: 0; padding: 0; font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; }
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 999;
+}
 
 /* Navbar */
 .navbar {
@@ -106,6 +114,18 @@
 }
 @media (max-width: 640px) {
   .grid { grid-template-columns: 1fr; }
-  .sidebar { display: none; }
+  .sidebar { 
+    display: none; 
+    position: fixed; 
+    top: 60px; 
+    left: 0; 
+    height: calc(100vh - 60px); 
+    z-index: 1000; 
+    width: 240px; 
+  }
+  .sidebar.mobile-open { display: block; }
   .navbar .search { display: none; }
+  .navbar .profile-info { display: none; }
+  .navbar .logout-btn { font-size: 12px; padding: 4px 8px; }
+  .navbar .brand h3 { font-size: 16px; }
 }
