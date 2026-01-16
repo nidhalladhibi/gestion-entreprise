@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect } from "react";
 import { authService } from "../services/api";
-import DataProvider from "./DataContext"; // 1. Importer le DataProvider
+import DataProvider from "./DataContext";
 
 export const AuthContext = createContext();
 
@@ -28,11 +28,10 @@ export default function AuthProvider({ children }) {
   const loginUser = async (email, password) => {
     try {
       const response = await authService.login(email, password);
-      
-      // Stocker le token et les données utilisateur
+
       localStorage.setItem("token", response.token);
       localStorage.setItem("user", JSON.stringify(response.user));
-      
+
       setUser(response.user);
       return { success: true, data: response };
     } catch (error) {
@@ -42,28 +41,30 @@ export default function AuthProvider({ children }) {
 
   const registerUser = async (name, email, password) => {
     try {
-      // D'abord, enregistrer l'utilisateur
-      const registerResponse = await authService.register(name, email, password);
-      
-      // Si l'enregistrement réussit, connecter automatiquement l'utilisateur
+      // Enregistrer l'utilisateur (sans stocker la réponse)
+      await authService.register(name, email, password);
+
+      // Connexion automatique après inscription
       try {
         const loginResponse = await authService.login(email, password);
-        
+
         localStorage.setItem("token", loginResponse.token);
         localStorage.setItem("user", JSON.stringify(loginResponse.user));
-        
+
         setUser(loginResponse.user);
         return { success: true, data: loginResponse };
-      } catch (loginError) {
-        // Si l'enregistrement a réussi mais la connexion échoue
-        // L'utilisateur peut se connecter manuellement
-        return { 
-          success: false, 
-          error: "Compte créé avec succès, mais la connexion automatique a échoué. Veuillez vous connecter manuellement." 
+      } catch {
+        return {
+          success: false,
+          error:
+            "Compte créé avec succès, mais la connexion automatique a échoué. Veuillez vous connecter manuellement.",
         };
       }
     } catch (error) {
-      return { success: false, error: error.message || "Erreur lors de l'enregistrement" };
+      return {
+        success: false,
+        error: error.message || "Erreur lors de l'enregistrement",
+      };
     }
   };
 
@@ -73,7 +74,7 @@ export default function AuthProvider({ children }) {
     setUser(null);
   };
 
-  // Alias pour compatibilité avec Navbar
+  // Alias pour compatibilité Navbar
   const logout = () => {
     logoutUser();
     window.location.href = "/login";
@@ -87,10 +88,9 @@ export default function AuthProvider({ children }) {
         loginUser,
         registerUser,
         logoutUser,
-        logout, // Pour compatibilité avec Navbar
+        logout,
       }}
     >
-      {/* 2. Envelopper les enfants avec DataProvider */}
       <DataProvider>{children}</DataProvider>
     </AuthContext.Provider>
   );
