@@ -6,22 +6,18 @@ import {
   Package,
   DollarSign,
   TrendingUp,
-  ShoppingCart,
   FileText,
   PlusCircle,
   UserPlus,
   Activity,
-  Clock,
   ArrowUpRight,
   ArrowDownRight,
-  BarChart2,
-  PieChart,
   Settings,
   Calendar,
   CreditCard,
-  Box,
   AlertCircle
 } from "react-feather";
+
 
 const styles = {
   container: {
@@ -345,12 +341,13 @@ export default function Home() {
   const clientGrowth = 12.5; // %
   const revenueGrowth = 8.3; // %
   const stockGrowth = -2.1; // %
+const getStockStatus = (stock) => {
+  if (stock > 50) return styles.stockHigh;
+  if (stock > 10) return styles.stockMedium;
+  return styles.stockLow;
+};
 
-  const getStockStatus = (stock) => {
-    if (stock > 50) return styles.stockHigh;
-    if (stock > 10) return styles.stockMedium;
-    return styles.stockLow;
-  };
+ 
 
   const getStockText = (stock) => {
     if (stock > 50) return "Élevé";
@@ -379,7 +376,7 @@ export default function Home() {
           })}
         </div>
         <h1 style={styles.title}>
-          {getGreeting()}, bienvenue sur votre tableau de bord
+          {getGreeting()}, Bienvenue sur votre tableau de bord
         </h1>
         <p style={styles.subtitle}>
           Voici un aperçu de votre activité et de vos performances récentes
@@ -443,7 +440,7 @@ export default function Home() {
           onMouseLeave={(e) => e.currentTarget.style.transform = "translateY(0)"}
         >
           <div style={{...styles.statIconContainer, backgroundColor: "rgba(139, 92, 246, 0.1)"}}>
-            <CreditCard size={28} color="#8b5cf6" />
+            <CreditCard size={28} color="#33274eff" />
           </div>
           <div style={styles.statContent}>
             <div>
@@ -661,7 +658,7 @@ export default function Home() {
                         ...styles.productStock,
                         ...getStockStatus(product.stock || 0)
                       }}>
-                        {product.stock || 0} unités
+                        {product.stock || 0} unités ({getStockText(product.stock || 0)})
                       </span>
                     </td>
                   </tr>
