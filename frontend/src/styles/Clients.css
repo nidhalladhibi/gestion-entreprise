@@ -1,0 +1,102 @@
+.clients-container {
+  padding: 16px;
+}
+
+.card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 6px 20px rgba(0,0,0,.08);
+}
+
+.client-form {
+  display: grid;
+  gap: 12px;
+}
+
+.client-form input,
+.client-form button,
+.search {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.client-form button {
+  background: #0d6efd;
+  color: white;
+  border: none;
+}
+
+.search {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+/* 📱 MOBILE */
+.mobile-list {
+  display: block;
+}
+
+.client-card {
+  background: white;
+  padding: 16px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 12px rgba(0,0,0,.08);
+}
+
+.client-card span {
+  display: block;
+  margin-top: 4px;
+}
+
+.actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.actions a,
+.actions button {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  background: #0d6efd;
+  color: white;
+  text-decoration: none;
+}
+
+.actions button {
+  background: #dc3545;
+}
+
+/* 🖥️ DESKTOP */
+.desktop-table {
+  display: none;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.desktop-table th,
+.desktop-table td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Responsive switch */
+@media (min-width: 768px) {
+  .mobile-list {
+    display: none;
+  }
+
+  .desktop-table {
+    display: table;
+  }
+
+  .client-form {
+    grid-template-columns: repeat(5, 1fr);
+    align-items: end;
+  }
+}
