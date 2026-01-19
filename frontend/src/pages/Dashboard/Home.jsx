@@ -15,7 +15,7 @@ import {
   Settings,
   Calendar,
   CreditCard,
-  AlertCircle
+  AlertCircle,
 } from "react-feather";
 
 

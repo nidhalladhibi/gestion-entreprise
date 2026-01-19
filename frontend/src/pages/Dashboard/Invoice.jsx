@@ -16,7 +16,6 @@ import {
   DollarSign,
   ShoppingCart,
   AlertCircle,
-  Printer,
   ChevronRight
 } from "react-feather";
 
