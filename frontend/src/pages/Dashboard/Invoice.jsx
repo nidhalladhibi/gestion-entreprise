@@ -16,7 +16,13 @@ import {
   DollarSign,
   ShoppingCart,
   AlertCircle,
-  ChevronRight
+  ChevronRight,
+  Briefcase,
+  MapPin,
+  Phone,
+  Mail,
+  Globe,
+  Edit3
 } from "react-feather";
 
 // Styles modernes avec design système cohérent
@@ -208,6 +214,13 @@ const styles = {
     backgroundColor: "#64748b",
     color: "#ffffff",
   },
+  buttonInfo: {
+    backgroundColor: "#8b5cf6",
+    color: "#ffffff",
+  },
+  buttonInfoHover: {
+    backgroundColor: "#7c3aed",
+  },
   buttonDisabled: {
     backgroundColor: "#cbd5e1",
     color: "#94a3b8",
@@ -290,6 +303,17 @@ const styles = {
     fontWeight: 700,
     color: "#1e293b",
     marginBottom: "8px",
+  },
+  companyDetails: {
+    fontSize: "0.875rem",
+    color: "#64748b",
+    lineHeight: 1.6,
+  },
+  companyDetailItem: {
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+    marginBottom: "4px",
   },
   invoiceMeta: {
     textAlign: "right",
@@ -401,11 +425,69 @@ const styles = {
     borderRadius: "8px",
     fontSize: "1rem",
   },
+  companySettings: {
+    backgroundColor: "#f0f9ff",
+    borderRadius: "12px",
+    padding: "16px",
+    marginBottom: "24px",
+    border: "1px solid #bae6fd",
+  },
+  companySettingsHeader: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: "12px",
+    cursor: "pointer",
+  },
+  companySettingsTitle: {
+    fontSize: "0.9375rem",
+    fontWeight: 600,
+    color: "#0369a1",
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+  },
+  companySettingsContent: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+    gap: "12px",
+    marginTop: "12px",
+  },
+  companySettingsInput: {
+    padding: "8px 12px",
+    border: "1px solid #cbd5e1",
+    borderRadius: "6px",
+    fontSize: "0.875rem",
+  },
+  invoiceFooter: {
+    marginTop: "48px",
+    paddingTop: "24px",
+    borderTop: "1px solid #e2e8f0",
+    color: "#64748b",
+    fontSize: "0.875rem",
+    textAlign: "center",
+  },
 };
 
 export default function Invoice() {
   const { clients, products, loading, error } = useContext(DataContext) || {};
 
+  // État pour les informations de l'entreprise
+  const [companyInfo, setCompanyInfo] = useState({
+    name: "Votre Entreprise",
+    address: "123 Rue de Commerce",
+    city: "1000 Tunis",
+    country: "Tunisie",
+    phone: "+216 12 345 678",
+    email: "contact@entreprise.tn",
+    website: "www.entreprise.tn",
+    taxId: "TN123456789",
+    regNumber: "B123456789",
+    bankInfo: "IBAN: TN59 1000 1234 5678 9012 3456",
+    logo: null,
+  });
+
+  const [showCompanySettings, setShowCompanySettings] = useState(false);
   const [selectedClient, setSelectedClient] = useState("");
   const [selectedProduct, setSelectedProduct] = useState("");
   const [invoiceNumber, setInvoiceNumber] = useState(`INV-${Date.now().toString().slice(-6)}`);
@@ -413,6 +495,7 @@ export default function Invoice() {
   const [items, setItems] = useState([]);
   const [hoverStates, setHoverStates] = useState({});
   const [activeStep, setActiveStep] = useState(1);
+  const [tempCompanyInfo, setTempCompanyInfo] = useState({...companyInfo});
 
   const invoiceRef = useRef(null);
 
@@ -422,6 +505,26 @@ export default function Invoice() {
       setInvoiceNumber(`INV-${Date.now().toString().slice(-6)}`);
     }
   }, [selectedClient, items.length]);
+
+  // Charger les informations de l'entreprise depuis le localStorage au démarrage
+  useEffect(() => {
+    const savedCompanyInfo = localStorage.getItem('companyInfo');
+    if (savedCompanyInfo) {
+      try {
+        const parsed = JSON.parse(savedCompanyInfo);
+        setCompanyInfo(parsed);
+        setTempCompanyInfo(parsed);
+      } catch (e) {
+        console.error('Erreur de chargement des informations entreprise:', e);
+      }
+    }
+  }, []);
+
+  const saveCompanyInfo = () => {
+    setCompanyInfo(tempCompanyInfo);
+    localStorage.setItem('companyInfo', JSON.stringify(tempCompanyInfo));
+    setShowCompanySettings(false);
+  };
 
   const addItem = () => {
     if (!selectedProduct || !products || quantity <= 0) return;
@@ -473,6 +576,8 @@ export default function Invoice() {
   };
 
   const totalInvoice = items.reduce((sum, item) => sum + item.total, 0);
+  const totalTVA = totalInvoice * 0.19; // TVA 19%
+  const totalTTC = totalInvoice * 1.19;
   const clientDetails = clients ? clients.find(c => c._id === selectedClient) : null;
 
   const handleExportPDF = () => {
@@ -491,7 +596,8 @@ export default function Invoice() {
       scale: 2, 
       useCORS: true, 
       backgroundColor: '#ffffff',
-      logging: false 
+      logging: false,
+      allowTaint: true,
     })
       .then((canvas) => {
         try {
@@ -531,7 +637,7 @@ export default function Invoice() {
 
     // Simulation de validation
     const confirmValidation = window.confirm(
-      `Valider cette facture de ${totalInvoice.toFixed(2)} DT pour ${clientDetails?.name} ?`
+      `Valider cette facture de ${totalTTC.toFixed(2)} DT pour ${clientDetails?.name} ?`
     );
 
     if (confirmValidation) {
@@ -609,6 +715,154 @@ export default function Invoice() {
           Créez et gérez vos factures en quelques clics. Exportez en PDF ou validez directement.
         </p>
       </div>
+
+      {/* Bouton de paramètres entreprise */}
+      <div style={{ marginBottom: "24px", display: "flex", justifyContent: "flex-end" }}>
+        <button
+          onClick={() => setShowCompanySettings(!showCompanySettings)}
+          style={{
+            ...styles.button,
+            ...styles.buttonInfo,
+            ...(hoverStates.companySettings ? styles.buttonInfoHover : {}),
+            padding: "10px 20px",
+            fontSize: "0.875rem",
+          }}
+          onMouseEnter={() => setHoverStates({...hoverStates, companySettings: true})}
+          onMouseLeave={() => setHoverStates({...hoverStates, companySettings: false})}
+        >
+          <Briefcase size={16} />
+          {showCompanySettings ? "Masquer" : "Configurer"} les informations entreprise
+        </button>
+      </div>
+
+      {/* Paramètres entreprise */}
+      {showCompanySettings && (
+        <div style={styles.companySettings}>
+          <div style={styles.companySettingsHeader}>
+            <div style={styles.companySettingsTitle}>
+              <Edit3 size={16} />
+              Informations de l'entreprise
+            </div>
+            <div style={{ display: "flex", gap: "8px" }}>
+              <button
+                onClick={saveCompanyInfo}
+                style={{
+                  ...styles.button,
+                  ...styles.buttonSuccess,
+                  padding: "6px 12px",
+                  fontSize: "0.8125rem",
+                }}
+              >
+                <CheckCircle size={12} />
+                Sauvegarder
+              </button>
+            </div>
+          </div>
+          
+          <div style={styles.companySettingsContent}>
+            <div>
+              <label style={styles.label}>Nom de l'entreprise *</label>
+              <input
+                type="text"
+                value={tempCompanyInfo.name}
+                onChange={(e) => setTempCompanyInfo({...tempCompanyInfo, name: e.target.value})}
+                style={styles.companySettingsInput}
+                placeholder="Nom de l'entreprise"
+              />
+            </div>
+            <div>
+              <label style={styles.label}>Adresse</label>
+              <input
+                type="text"
+                value={tempCompanyInfo.address}
+                onChange={(e) => setTempCompanyInfo({...tempCompanyInfo, address: e.target.value})}
+                style={styles.companySettingsInput}
+                placeholder="Adresse"
+              />
+            </div>
+            <div>
+              <label style={styles.label}>Ville / Code postal</label>
+              <input
+                type="text"
+                value={tempCompanyInfo.city}
+                onChange={(e) => setTempCompanyInfo({...tempCompanyInfo, city: e.target.value})}
+                style={styles.companySettingsInput}
+                placeholder="Ville"
+              />
+            </div>
+            <div>
+              <label style={styles.label}>Pays</label>
+              <input
+                type="text"
+                value={tempCompanyInfo.country}
+                onChange={(e) => setTempCompanyInfo({...tempCompanyInfo, country: e.target.value})}
+                style={styles.companySettingsInput}
+                placeholder="Pays"
+              />
+            </div>
+            <div>
+              <label style={styles.label}>Téléphone</label>
+              <input
+                type="text"
+                value={tempCompanyInfo.phone}
+                onChange={(e) => setTempCompanyInfo({...tempCompanyInfo, phone: e.target.value})}
+                style={styles.companySettingsInput}
+                placeholder="Téléphone"
+              />
+            </div>
+            <div>
+              <label style={styles.label}>Email</label>
+              <input
+                type="email"
+                value={tempCompanyInfo.email}
+                onChange={(e) => setTempCompanyInfo({...tempCompanyInfo, email: e.target.value})}
+                style={styles.companySettingsInput}
+                placeholder="Email"
+              />
+            </div>
+            <div>
+              <label style={styles.label}>Site web</label>
+              <input
+                type="text"
+                value={tempCompanyInfo.website}
+                onChange={(e) => setTempCompanyInfo({...tempCompanyInfo, website: e.target.value})}
+                style={styles.companySettingsInput}
+                placeholder="Site web"
+              />
+            </div>
+            <div>
+              <label style={styles.label}>N° TVA / Fiscal</label>
+              <input
+                type="text"
+                value={tempCompanyInfo.taxId}
+                onChange={(e) => setTempCompanyInfo({...tempCompanyInfo, taxId: e.target.value})}
+                style={styles.companySettingsInput}
+                placeholder="N° TVA"
+              />
+            </div>
+            <div>
+              <label style={styles.label}>Registre de commerce</label>
+              <input
+                type="text"
+                value={tempCompanyInfo.regNumber}
+                onChange={(e) => setTempCompanyInfo({...tempCompanyInfo, regNumber: e.target.value})}
+                style={styles.companySettingsInput}
+                placeholder="N° registre"
+              />
+            </div>
+            <div>
+              <label style={styles.label}>Informations bancaires</label>
+              <input
+                type="text"
+                value={tempCompanyInfo.bankInfo}
+                onChange={(e) => setTempCompanyInfo({...tempCompanyInfo, bankInfo: e.target.value})}
+                style={styles.companySettingsInput}
+                placeholder="IBAN / RIB"
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Wizard Steps */}
       <div style={styles.wizardSteps}>
@@ -870,14 +1124,33 @@ export default function Invoice() {
           </div>
 
           <div style={styles.invoicePreview}>
-            {/* En-tête de la facture */}
+            {/* En-tête de la facture avec informations entreprise */}
             <div style={styles.invoiceHeader}>
               <div style={styles.companyInfo}>
-                <div style={styles.companyName}>Votre Entreprise</div>
-                <div style={{ color: "#64748b", fontSize: "0.875rem" }}>
-                  123 Rue de Commerce<br />
-                  1000 Tunis, Tunisie<br />
-                  contact@entreprise.tn • +216 12 345 678
+                <div style={styles.companyName}>{companyInfo.name}</div>
+                <div style={styles.companyDetails}>
+                  <div style={styles.companyDetailItem}>
+                    <MapPin size={14} />
+                    {companyInfo.address}, {companyInfo.city}, {companyInfo.country}
+                  </div>
+                  <div style={styles.companyDetailItem}>
+                    <Phone size={14} />
+                    {companyInfo.phone}
+                  </div>
+                  <div style={styles.companyDetailItem}>
+                    <Mail size={14} />
+                    {companyInfo.email}
+                  </div>
+                  <div style={styles.companyDetailItem}>
+                    <Globe size={14} />
+                    {companyInfo.website}
+                  </div>
+                  {companyInfo.taxId && (
+                    <div style={styles.companyDetailItem}>
+                      <Briefcase size={14} />
+                      TVA: {companyInfo.taxId}
+                    </div>
+                  )}
                 </div>
               </div>
               
@@ -908,22 +1181,25 @@ export default function Invoice() {
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "12px" }}>
                   {clientDetails.email && (
                     <div style={{ fontSize: "0.875rem", color: "#64748b" }}>
-                      📧 {clientDetails.email}
+                      <Mail size={12} style={{ verticalAlign: "middle", marginRight: "4px" }} />
+                      {clientDetails.email}
                     </div>
                   )}
                   {clientDetails.phone && (
                     <div style={{ fontSize: "0.875rem", color: "#64748b" }}>
-                      📞 {clientDetails.phone}
+                      <Phone size={12} style={{ verticalAlign: "middle", marginRight: "4px" }} />
+                      {clientDetails.phone}
                     </div>
                   )}
                   {clientDetails.address && (
                     <div style={{ fontSize: "0.875rem", color: "#64748b" }}>
-                      📍 {clientDetails.address}
+                      <MapPin size={12} style={{ verticalAlign: "middle", marginRight: "4px" }} />
+                      {clientDetails.address}
                     </div>
                   )}
                   {clientDetails.credit !== undefined && (
                     <div style={{ fontSize: "0.875rem", color: "#64748b" }}>
-                      <CreditCard size={14} style={{ verticalAlign: "middle", marginRight: "4px" }} />
+                      <CreditCard size={12} style={{ verticalAlign: "middle", marginRight: "4px" }} />
                       Crédit: {clientDetails.credit.toFixed(2)} DT
                     </div>
                   )}
@@ -938,7 +1214,7 @@ export default function Invoice() {
                   <th style={styles.th}>Produit</th>
                   <th style={styles.th}>Prix Unitaire</th>
                   <th style={styles.th}>Quantité</th>
-                  <th style={styles.th}>Total</th>
+                  <th style={styles.th}>Total HT</th>
                   <th style={styles.th} className="pdf-hide">Actions</th>
                 </tr>
               </thead>
@@ -953,7 +1229,11 @@ export default function Invoice() {
                       <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                         <button
                           onClick={() => updateQuantity(item._id, item.quantity - 1)}
-                          style={styles.quantityButton}
+                          style={{
+                            ...styles.quantityButton,
+                            width: "28px",
+                            height: "28px",
+                          }}
                           className="pdf-hide"
                         >
                           -
@@ -961,7 +1241,11 @@ export default function Invoice() {
                         <span>{item.quantity}</span>
                         <button
                           onClick={() => updateQuantity(item._id, item.quantity + 1)}
-                          style={styles.quantityButton}
+                          style={{
+                            ...styles.quantityButton,
+                            width: "28px",
+                            height: "28px",
+                          }}
                           className="pdf-hide"
                         >
                           +
@@ -975,7 +1259,7 @@ export default function Invoice() {
                         style={{
                           ...styles.button,
                           ...styles.buttonDanger,
-                          padding: "8px 12px",
+                          padding: "6px 12px",
                           fontSize: "0.875rem"
                         }}
                       >
@@ -987,35 +1271,33 @@ export default function Invoice() {
               </tbody>
             </table>
 
-            {/* Total */}
+            {/* Total avec TVA */}
             <div style={styles.totalSection}>
               <div style={styles.totalRow}>
-                <span>Sous-total:</span>
+                <span>Total HT:</span>
                 <span>{totalInvoice.toFixed(2)} DT</span>
               </div>
               <div style={styles.totalRow}>
                 <span>TVA (19%):</span>
-                <span>{(totalInvoice * 0.19).toFixed(2)} DT</span>
+                <span>{totalTVA.toFixed(2)} DT</span>
               </div>
               <div style={{ ...styles.totalRow, marginTop: "20px" }}>
                 <span>Total TTC:</span>
                 <span style={styles.totalAmount}>
-                  {(totalInvoice * 1.19).toFixed(2)} DT
+                  {totalTTC.toFixed(2)} DT
                 </span>
               </div>
             </div>
 
-            {/* Pied de page */}
-            <div style={{
-              marginTop: "48px",
-              paddingTop: "24px",
-              borderTop: "1px solid #e2e8f0",
-              color: "#64748b",
-              fontSize: "0.875rem",
-              textAlign: "center",
-            }}>
-              <p>Paiement attendu sous 30 jours • IBAN: TN59 1000 1234 5678 9012 3456</p>
-              <p>Merci pour votre confiance !</p>
+            {/* Pied de page avec informations entreprise */}
+            <div style={styles.invoiceFooter}>
+              <p>{companyInfo.bankInfo}</p>
+              <p>Paiement attendu sous 30 jours • Merci pour votre confiance !</p>
+              {companyInfo.regNumber && (
+                <p style={{ fontSize: "0.75rem", marginTop: "8px" }}>
+                  RC: {companyInfo.regNumber} • TVA: {companyInfo.taxId}
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -1060,6 +1342,12 @@ export default function Invoice() {
         {`
           @keyframes spin {
             to { transform: rotate(360deg); }
+          }
+          
+          @media print {
+            .pdf-hide {
+              display: none !important;
+            }
           }
           
           @media (max-width: 768px) {
